@@ -12,4 +12,4 @@ class TIP3P():
     # epsilon_S is the static relative dielectric permittivity of the solvent, for TIP3 is 97.
     epsilon_S = 97
     # For TIP3P, it is 0.00764 e nm2 = 2 * hydrogen charge [0.417*pq.e] * OH bond length (0.09572*pq.nm)**2
-    gamma_s = 2 * 0.00764 * pq.e * pq.nm ** 2
+    gamma_s = 2 * 0.417 * pq.e * (0.09572 * pq.nm) ** 2
