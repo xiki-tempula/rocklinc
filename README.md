@@ -1,8 +1,8 @@
 RocklinC
 ==============================
 [//]: # (Badges)
-[![Travis Build Status](https://travis-ci.com/REPLACE_WITH_OWNER_ACCOUNT/RocklinC.svg?branch=master)](https://travis-ci.com/REPLACE_WITH_OWNER_ACCOUNT/RocklinC)
-[![codecov](https://codecov.io/gh/REPLACE_WITH_OWNER_ACCOUNT/RocklinC/branch/master/graph/badge.svg)](https://codecov.io/gh/REPLACE_WITH_OWNER_ACCOUNT/RocklinC/branch/master)
+[![Travis Build Status](https://travis-ci.com/xiki-tempula/RocklinC.svg?branch=master)](https://travis-ci.com/xiki-tempula/RocklinC)
+[![codecov](https://codecov.io/gh/xiki-tempula/RocklinC/branch/master/graph/badge.svg)](https://codecov.io/gh/xiki-tempula/RocklinC/branch/master)
 
 
 A python module for performing Rocklin Correction.

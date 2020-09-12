@@ -1,0 +1,92 @@
+#############################################################################
+# Heterogenous PB calculations to calculate the residual integrated
+# potentials I_P and I_L.
+#
+# Input files:
+#   prot_only.pqr    - The protein-ligand complex, but with only the protein
+#                      atoms charged.
+#   lig_in_prot.pqr  - The protein-ligand complex, but with only the ligand
+#                      atoms charged.
+#   lig_only.pqr     - The ligand only, in the same coordinates as the above.
+#                      Used for centering the box only.
+#
+# Output files:
+#   protein_RIP_het.dx   - The potential grid based on prot_only.pqr
+#   ligand_RIP_het.dx    - The potential grid based on lig_in_prot.pqr
+#
+#############################################################################
+
+# READ IN MOLECULES
+read
+    mol pqr {prot_only}
+    mol pqr {lig_in_prot}
+    mol pqr {lig_only}
+end
+
+# CALCULATE POTENTIAL WITH ONLY THE PROTEIN CHARGES
+elec name protein_RIP_het
+    mg-manual
+    dime 257 257 257
+    glen {x} {y} {z}
+    gcent mol 3
+    mol 1
+    lpbe
+    bcfl mdh
+    pdie 1.0
+    sdie {e}
+    chgm spl4
+    srfm smol
+    srad 1.4
+    swin 0.3
+    sdens 40.0
+    temp {t}
+    calcenergy no
+    calcforce no
+    write pot dx protein_RIP_het
+end
+
+# CALCULATE POTENTIAL WITH ONLY THE LIGAND CHARGES
+elec name ligand_RIP_het
+    mg-manual
+    dime 257 257 257
+    glen {x} {y} {z}
+    gcent mol 3
+    mol 2
+    lpbe
+    bcfl mdh
+    pdie 1.0
+    sdie {e}
+    chgm spl4
+    srfm smol
+    srad 1.4
+    swin 0.3
+    sdens 40.0
+    temp {t}
+    calcenergy no
+    calcforce no
+    write pot dx ligand_RIP_het
+end
+
+elec name ligand_RIP_hom
+    mg-manual
+    dime 257 257 257
+    glen {x} {y} {z}
+    gcent mol 3
+    mol 2
+    lpbe
+    bcfl mdh
+    pdie 1.0
+    sdie 1.0
+    chgm spl4
+    srfm smol
+    srad 1.4
+    swin 0.3
+    sdens 40.0
+    temp {t}
+    calcenergy no
+    calcforce no
+    write pot dx ligand_RIP_hom
+end
+
+# SO LONG
+quit
