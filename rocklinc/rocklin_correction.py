@@ -50,6 +50,25 @@ class RocklinCorrection():
         else:
             self.water = water
 
+    def set_APBS_input(self, box=None,
+                        out_prot_only='prot_only.pqr',
+                        out_lig_in_prot='lig_in_prot.pqr',
+                        out_lig_only='lig_only.pqr'):
+        if box is None:
+            self.apbs_box = self.box
+        else:
+            try:
+                box.rescale(pq.angstrom)
+                self.apbs_box = box
+            except AttributeError:
+                self.apbs_box = box * pq.angstrom
+        self.apbs_vol = np.prod(self.apbs_box)
+
+        self.out_prot_only = out_prot_only
+        self.out_lig_in_prot = out_lig_in_prot
+        self.out_lig_only = out_lig_only
+
+
     def make_APBS_input(self, tpr, cord, pqr, ligand_selection,
                         solvent_selection='resname SOL',
                         out_prot_only='prot_only.pqr',
@@ -62,7 +81,6 @@ class RocklinCorrection():
 
         box = cord.dimensions[:3]
         self.apbs_box = cord.dimensions[:3] * pq.angstrom
-        self.apbs_vol = np.prod(self.apbs_box)
         pqr.atoms.positions = cord.atoms.positions
         pqr.dimensions = cord.dimensions
 
@@ -96,26 +114,33 @@ class RocklinCorrection():
     def dx2IP(self, dx):
         g = Grid(dx)
         V = ((np.prod(g.delta*pq.angstrom)) * np.prod(g.grid.shape))
+        self.apbs_vol = V
         return np.average(g.grid) * (1/pq.e) * (constants.kB * self.temp) * V
 
     def read_APBS(self, ligand_RIP_het='ligand_RIP_het.dx',
                   protein_RIP_het='protein_RIP_het.dx',
-                  ligand_RIP_hom='ligand_RIP_hom.dx'):
+                  ligand_RIP_hom='ligand_RIP_hom.dx', IP=None):
         # Ligand Het
         IL_Bx = self.dx2IP(ligand_RIP_het)
         IL_BQx = (-constants.xi_CB * constants.coulomb_factor / self.water.epsilon_S) * self.lig_netq * (self.apbs_vol ** (2.0 / 3.0))
         self.IL = IL_Bx - IL_BQx
         # Protein Het
-        IP_Bx = self.dx2IP(protein_RIP_het)
-        IP_BQx = (-constants.xi_CB * constants.coulomb_factor / self.water.epsilon_S) * self.protein_netq * (self.apbs_vol ** (2.0 / 3.0))
-        self.IP = IP_Bx - IP_BQx
+        if IP is None:
+            IP_Bx = self.dx2IP(protein_RIP_het)
+            IP_BQx = (-constants.xi_CB * constants.coulomb_factor / self.water.epsilon_S) * self.protein_netq * (self.apbs_vol ** (2.0 / 3.0))
+            self.IP = IP_Bx - IP_BQx
+        else:
+            self.IP = IP * self.IL.units
         # Ligand Het
         IL_hom_Bx = self.dx2IP(ligand_RIP_hom)
         IL_hom_BQx = (-constants.xi_CB * constants.coulomb_factor / 1) * self.lig_netq * (self.apbs_vol ** (2.0 / 3.0))
         IL_hom = IL_hom_Bx - IL_hom_BQx
         self.IL_SLV = self.IL - IL_hom
 
-    def compute(self):
+
+    def compute(self, NS=None):
+        if NS:
+            self.NS = NS
         delta_DSC = - (self.water.gamma_s * self.lig_netq) / (6 * constants.epsilon_0) * self.NS / self.vol
         delta_NET = - constants.xi_LS / (8 * np.pi * constants.epsilon_0) * (
                     (self.protein_netq + self.lig_netq) ** 2 - self.protein_netq ** 2) / (self.vol ** (1/3))
