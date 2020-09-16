@@ -16,24 +16,17 @@ import MDAnalysis as mda
 from . import constants
 from .waters import TIP3P
 
-def convert(value, unit):
-    try:
-        return value.rescale(unit)
-    except AttributeError:
-        return value * unit
-
-
 class RocklinCorrection():
     def __init__(self, box, lig_netq, protein_netq, temp=None, water=None):
-        self.box = convert(box, pq.angstrom)
+        self.box = pq.Quantity(box, pq.angstrom)
         self.vol = self.box[0] * self.box[1] * self.box[2]
-        self.lig_netq = convert(lig_netq, pq.e)
-        self.protein_netq = convert(protein_netq, pq.e)
+        self.lig_netq = pq.Quantity(lig_netq, pq.e)
+        self.protein_netq = pq.Quantity(protein_netq, pq.e)
 
         if temp is None:
             self.temp = 298.15 * pq.Kelvin
         else:
-            self.temp = convert(temp, pq.Kelvin)
+            self.temp = pq.Quantity(temp, pq.Kelvin)
         if water is None:
             self.water = TIP3P
         else:
@@ -46,17 +39,17 @@ class RocklinCorrection():
         if box is None:
             self.apbs_box = self.box
         else:
-            self.apbs_box = convert(box, pq.angstrom)
+            self.apbs_box = pq.Quantity(box, pq.angstrom)
 
         if qL is None:
             self.apbs_qL = self.lig_netq
         else:
-            self.apbs_qL = convert(qL, pq.e)
+            self.apbs_qL = pq.Quantity(qL, pq.e)
 
         if qP is None:
             self.apbs_qP = self.protein_netq
         else:
-            self.apbs_qP = convert(qP, pq.e)
+            self.apbs_qP = pq.Quantity(qP, pq.e)
 
         self.apbs_vol = np.prod(self.apbs_box)
 
@@ -104,9 +97,9 @@ class RocklinCorrection():
             f.write(txt.format(prot_only=self.out_prot_only,
                                lig_in_prot=self.out_lig_in_prot,
                                lig_only=self.out_lig_only,
-                               x=box[0].base, y=box[1].base, z=box[2].base,
+                               x=box[0].magnitude, y=box[1].magnitude, z=box[2].magnitude,
                                e=self.water.epsilon_S,
-                               t=self.temp.base,))
+                               t=self.temp.magnitude,))
         call([apbs_exe, apbs_in])
 
     def dx2IP(self, dx):
