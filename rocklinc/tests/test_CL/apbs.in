@@ -27,7 +27,7 @@ end
 elec name protein_RIP_het
     mg-manual
     dime 257 257 257
-    glen 20.0 20.0 20.0
+    glen 20.00 20.00 20.00
     gcent mol 3
     mol 1
     lpbe
@@ -49,7 +49,7 @@ end
 elec name ligand_RIP_het
     mg-manual
     dime 257 257 257
-    glen 20.0 20.0 20.0
+    glen 20.00 20.00 20.00
     gcent mol 3
     mol 2
     lpbe
@@ -70,7 +70,7 @@ end
 elec name ligand_RIP_hom
     mg-manual
     dime 257 257 257
-    glen 20.0 20.0 20.0
+    glen 20.00 20.00 20.00
     gcent mol 3
     mol 2
     lpbe

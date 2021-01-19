@@ -14,7 +14,21 @@ import numpy as np
 import os
 
 def test_manual_cl():
-    pass
+    box = [2, 2, 2] * pq.nm
+    lig_netq = -1 * pq.e
+    protein_netq = 0 * pq.e
+    temp = 310 * pq.kelvin
+    new = rocklinc.RocklinCorrection(box, lig_netq, protein_netq, temp)
+
+    new.set_APBS_input(0)
+    # check apbs.in
+    with open('apbs.in', 'r') as f:
+        current_apbs_in = f.read()
+    with open(resource_filename(__name__, 'test_CL/apbs.in'), 'r') as f:
+        model_apbs_in = f.read()
+    assert current_apbs_in == model_apbs_in
+
+
 
 def test_automatic_cl():
     gro='''Single cl molecule                                                     
@@ -76,3 +90,11 @@ def test_automatic_cl():
     os.remove('apbs.in')
     np.testing.assert_almost_equal(result.base, 626.979, decimal=3)
 
+    new.write('correction.txt')
+    # check correction.txt
+    with open('correction.txt', 'r') as f:
+        current_correction = f.read()
+    with open(resource_filename(__name__, 'test_CL/correction.txt'), 'r') as f:
+        model_correction = f.read()
+    assert current_correction == model_correction
+    os.remove('correction.txt')

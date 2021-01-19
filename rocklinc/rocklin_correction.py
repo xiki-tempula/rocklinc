@@ -300,20 +300,3 @@ class RocklinCorrection():
             The output file name.'''
         with open(outfile, 'w') as f:
             f.write('\n'.join(self.output))
-
-
-if __name__ == "__main__":
-    tpr = mda.Universe('prod.tpr')
-    pqr = mda.Universe('prod.pqr')
-    cord = mda.Universe('prod.gro')
-    lig_netq = -1 * pq.e
-    protein_netq = 0 * pq.e
-    temp = 310 * pq.kelvin
-    lig_selection = 'resname CL'
-    new = RocklinCorrection(cord.dimensions[:3], lig_netq, protein_netq,
-                            temp)
-    new.make_APBS_input(tpr, cord, pqr, lig_selection)
-    new.run_APBS()
-    new.read_APBS()
-    result = new.compute()
-    new.write('correction.txt')
