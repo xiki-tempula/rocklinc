@@ -9,6 +9,9 @@ dependencies:
   - pytest
   - pytest-cov
   - codecov
+  - quantities
+  - numpy
+  - MDAnalysis
 
     # Pip-only installs
   #- pip:
