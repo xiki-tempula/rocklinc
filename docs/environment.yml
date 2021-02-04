@@ -1,0 +1,6 @@
+name: docs
+channels:
+dependencies:
+    # Base depends
+  - python
+  - pip
