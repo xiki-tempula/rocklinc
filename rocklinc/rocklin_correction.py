@@ -47,11 +47,12 @@ class RocklinCorrection():
             self.water = water
 
     def set_APBS_input(self, NS, box=None, qL=None, qP=None,
-                       out_prot_only='prot_only.pqr',
-                       out_lig_in_prot='lig_in_prot.pqr',
-                       out_lig_only='lig_only.pqr',
+                       in_prot_only='prot_only.pqr',
+                       in_lig_in_prot='lig_in_prot.pqr',
+                       in_lig_only='lig_only.pqr',
                        apbs_in='apbs.in'):
         ''' Manually set the input file for the APBS calculations.
+
         Parameters
         ----------
         NS : int
@@ -63,13 +64,13 @@ class RocklinCorrection():
             The unit charge of the ligand.
         qP : float, optional
             The unit charge of the protein.
-        out_prot_only : str, optional
+        in_prot_only : str, optional
             The name of the pqr file where the ligand has no partial charge.
             (``prot_only.pqr``)
-        out_lig_in_prot : str, optional
+        in_lig_in_prot : str, optional
             The name of the pqr file where the protein has no partial charge.
             (``lig_in_prot.pqr``)
-        out_lig_only : str, optional
+        in_lig_only : str, optional
             The name of the pqr file of the ligand.
             (``lig_only.pqr``)
         apbs_in: str, optional
@@ -94,9 +95,9 @@ class RocklinCorrection():
 
         self.apbs_vol = np.prod(self.apbs_box)
 
-        self.out_prot_only = out_prot_only
-        self.out_lig_in_prot = out_lig_in_prot
-        self.out_lig_only = out_lig_only
+        self.in_prot_only = in_prot_only
+        self.in_lig_in_prot = in_lig_in_prot
+        self.in_lig_only = in_lig_only
         self.IP = None
 
         self._write_APBS_input(apbs_in)
@@ -104,11 +105,12 @@ class RocklinCorrection():
 
     def make_APBS_input(self, universe, ligand_selection,
                         solvent_selection='resname SOL',
-                        out_prot_only='prot_only.pqr',
-                        out_lig_in_prot='lig_in_prot.pqr',
-                        out_lig_only='lig_only.pqr',
+                        in_prot_only='prot_only.pqr',
+                        in_lig_in_prot='lig_in_prot.pqr',
+                        in_lig_only='lig_only.pqr',
                         apbs_in='apbs.in'):
         ''' Automatically setup the input file for the APBS calculations.
+
         Parameters
         ----------
         universe : MDAnalysis.Universe
@@ -118,13 +120,13 @@ class RocklinCorrection():
             The selection string for the ligand.
         solvent_selection : str, optional
             The selection string for the solvent. (``resname SOL``)
-        out_prot_only : str, optional
+        in_prot_only : str, optional
             The name of the pqr file where the ligand has no partial charge.
             (``prot_only.pqr``)
-        out_lig_in_prot : str, optional
+        in_lig_in_prot : str, optional
             The name of the pqr file where the protein has no partial charge.
             (``lig_in_prot.pqr``)
-        out_lig_only : str, optional
+        in_lig_only : str, optional
             The name of the pqr file of the ligand.
             (``lig_only.pqr``)
         apbs_in: str, optional
@@ -138,9 +140,9 @@ class RocklinCorrection():
         NS : int
             The number of solvent molecules in the system.
         '''
-        self.out_prot_only = out_prot_only
-        self.out_lig_in_prot = out_lig_in_prot
-        self.out_lig_only = out_lig_only
+        self.in_prot_only = in_prot_only
+        self.in_lig_in_prot = in_lig_in_prot
+        self.in_lig_only = in_lig_only
 
 
         box = universe.dimensions[:3]
@@ -151,12 +153,12 @@ class RocklinCorrection():
         # Charge only the ligand
         universe.select_atoms('not {}'.format(ligand_selection)).charges = 0
         self.apbs_qL = np.sum(universe.atoms.charges) * pq.e
-        universe.select_atoms('not {}'.format(solvent_selection)).write(out_lig_in_prot)
+        universe.select_atoms('not {}'.format(solvent_selection)).write(in_lig_in_prot)
         # Charge only the Rest of the system
         universe.atoms.charges = charges
         universe.select_atoms('{}'.format(ligand_selection)).charges = 0
         self.apbs_qP = np.sum(universe.atoms.charges) * pq.e
-        universe.select_atoms('not {}'.format(solvent_selection)).write(out_prot_only)
+        universe.select_atoms('not {}'.format(solvent_selection)).write(in_prot_only)
 
         # Check if there is anything other than ligand and solvent
         if len(universe.select_atoms('not (({}) or ({}))'.format(ligand_selection, solvent_selection))) > 0:
@@ -165,7 +167,7 @@ class RocklinCorrection():
             self.IP = 0
 
         # Ligand for centering
-        universe.select_atoms('{}'.format(ligand_selection)).write(out_lig_only)
+        universe.select_atoms('{}'.format(ligand_selection)).write(in_lig_only)
         self.NS = len(universe.select_atoms(solvent_selection).residues)
 
         self._write_APBS_input(apbs_in)
@@ -175,9 +177,9 @@ class RocklinCorrection():
             txt = f.read()
         box = self.apbs_box
         with open(apbs_in, 'w') as f:
-            f.write(txt.format(prot_only=self.out_prot_only,
-                               lig_in_prot=self.out_lig_in_prot,
-                               lig_only=self.out_lig_only,
+            f.write(txt.format(prot_only=self.in_prot_only,
+                               lig_in_prot=self.in_lig_in_prot,
+                               lig_only=self.in_lig_only,
                                x=box[0].magnitude, y=box[1].magnitude, z=box[2].magnitude,
                                e=self.water.epsilon_S,
                                t=self.temp.magnitude,))

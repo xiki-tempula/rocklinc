@@ -5,15 +5,17 @@
 
 Welcome to RocklinC's documentation!
 =========================================================
+This is a python implementation of the Rocklin Correction. The calculation is
+performed in three steps. The first step is the setting up of the system. The
+second step is the APBS calculation. The third step is summarising the results.
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   getting_started
-   api
-
-
+   system_setup
+   APBS_calculations
+   write_result
 
 Indices and tables
 ==================
