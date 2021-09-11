@@ -106,3 +106,5 @@ ENV/
 *profraw
 .DS_Store
 .idea
+*.dx
+*.npy
