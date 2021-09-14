@@ -209,7 +209,7 @@ class RocklinCorrection():
 
     def read_APBS(self, ligand_RIP_het='ligand_RIP_het.dx',
                   protein_RIP_het='protein_RIP_het.dx',
-                  ligand_RIP_hom='ligand_RIP_hom.dx', IP=None):
+                  ligand_RIP_hom='ligand_RIP_hom.dx', IP=None, mean_IP=None):
         ''' Read the result from the APBS calculations.
 
         Parameters
@@ -224,6 +224,17 @@ class RocklinCorrection():
             If system only has ligand, set the integrated potential of protein
             to 0.
         '''
+        # For robust
+        try:
+            self.apbs_qL
+        except AttributeError:
+            self.apbs_qL = self.lig_netq
+
+        try:
+            self.apbs_qP
+        except AttributeError:
+            self.apbs_qP = self.protein_netq
+
         # Ligand Het
         IL_Bx = self._dx2IP(ligand_RIP_het)
         IL_BQx = (-constants.xi_CB * constants.coulomb_factor / self.water.epsilon_S) * self.apbs_qL * (self.apbs_vol ** (2.0 / 3.0))
@@ -231,6 +242,11 @@ class RocklinCorrection():
         # Protein Het
         if IP is not None:
             self.IP = IP
+        if mean_IP is not None:
+            IP_Bx = mean_IP * (1 / pq.e) * (constants.kB * self.temp) * self.vol
+            IP_BQx = (-constants.xi_CB * constants.coulomb_factor / self.water.epsilon_S) * self.apbs_qP * (self.apbs_vol ** (2.0 / 3.0))
+            self.IP = IP_Bx - IP_BQx
+
         if self.IP is None:
             IP_Bx = self._dx2IP(protein_RIP_het)
             IP_BQx = (-constants.xi_CB * constants.coulomb_factor / self.water.epsilon_S) * self.apbs_qP * (self.apbs_vol ** (2.0 / 3.0))
