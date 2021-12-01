@@ -159,6 +159,8 @@ class RocklinCorrection():
         universe.select_atoms('{}'.format(ligand_selection)).charges = 0
         self.apbs_qP = np.sum(universe.atoms.charges) * pq.e
         universe.select_atoms('not {}'.format(solvent_selection)).write(in_prot_only)
+        # Restore the charge
+        universe.atoms.charges = charges
 
         # Check if there is anything other than ligand and solvent
         if len(universe.select_atoms('not (({}) or ({}))'.format(ligand_selection, solvent_selection))) > 0:
