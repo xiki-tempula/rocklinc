@@ -1,7 +1,7 @@
 from rocklinc.lipid import StepLipid, CurveLipid
 from rocklinc.lipid import plot_dx
 import numpy as np
-import matplotlib.pyplot as plt
+import matplotlib
 import pytest
 
 class TestStepLipid():
@@ -21,7 +21,7 @@ class TestStepLipid():
 
     def test_fig(self, lipid):
         lipid, fig = lipid
-        assert isinstance(fig, plt.figure)
+        assert isinstance(fig, matplotlib.figure.Figure)
 
 class TestCurveLipid():
     @staticmethod
@@ -43,4 +43,4 @@ class TestCurveLipid():
     
     def test_fig(self, lipid):
         lipid, fig = lipid
-        assert isinstance(fig, plt.figure)
+        assert isinstance(fig, matplotlib.figure.Figure)
