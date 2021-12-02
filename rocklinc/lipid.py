@@ -407,7 +407,7 @@ class CurveLipid(LipdBase):
         '''
         return k2 / (1 + np.exp(-(k1*(x-b1)))) + b2
 
-def plot_dx(x, charge, diel, lipid):
+def plot_dx(x, charge, diel, esp):
     fig, host = plt.subplots()
     fig.subplots_adjust(right=0.75)
 
@@ -427,20 +427,24 @@ def plot_dx(x, charge, diel, lipid):
     # Second, show the right spine.
     par2.spines["right"].set_visible(True)
 
-    size = charge.shape
-    p1, = host.plot(x, [0, 1, 2], "b-", label="Density")
-    p2, = par1.plot([0, 1, 2], [0, 3, 2], "r-", label="Temperature")
-    p3, = par2.plot([0, 1, 2], [50, 30, 15], "g-", label="Velocity")
+    shape = charge.shape
+    charge = charge[int(np.rint(shape[0] / 2)), int(np.rint(shape[0] / 2)), :]
+    diel = diel[int(np.rint(shape[0] / 2)), int(np.rint(shape[0] / 2)), :]
+    esp = esp[int(np.rint(shape[0] / 2)), int(np.rint(shape[0] / 2)), :]
+
+    p1, = host.plot(x, esp, "b-", label="ESP")
+    p2, = par1.plot(x, charge, "r-", label="Charge")
+    p3, = par2.plot(x, diel, "g-", label="Diel")
 
     host.set_xlim(0, 2)
     host.set_ylim(0, 2)
     par1.set_ylim(0, 4)
     par2.set_ylim(1, 65)
 
-    host.set_xlabel("Distance")
-    host.set_ylabel("Density")
-    par1.set_ylabel("Temperature")
-    par2.set_ylabel("Velocity")
+    host.set_xlabel("Z axis (A)")
+    host.set_ylabel("ESP (kT/e)")
+    par1.set_ylabel("Charge (e/Å^3)")
+    par2.set_ylabel("Diel")
 
     host.yaxis.label.set_color(p1.get_color())
     par1.yaxis.label.set_color(p2.get_color())
