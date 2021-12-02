@@ -370,12 +370,9 @@ class CurveLipid(LipdBase):
                gauss(x, pq.Quantity(GL_loc, pq.angstrom),
                      pq.Quantity(GL_std, pq.angstrom),
                      pq.Quantity(GL_mag, pq.e / pq.angstrom ** 3)) + \
-               gauss(x, pq.Quantity(GL_loc, pq.angstrom),
-                     pq.Quantity(GL_std, pq.angstrom),
-                     pq.Quantity(GL_mag, pq.e / pq.angstrom ** 3)) + \
                gauss(x, pq.Quantity(neg_loc, pq.angstrom),
                      pq.Quantity(neg_std, pq.angstrom),
-                     pq.Quantity(neg_mag, pq.e / pq.angstrom ** 3)) + \
+                     pq.Quantity(neg_mag, pq.e / pq.angstrom ** 3) * -1) + \
                gauss(x, pq.Quantity(0, pq.angstrom),
                      pq.Quantity(pos_std, pq.angstrom),
                      pq.Quantity(pos_mag, pq.e / pq.angstrom ** 3))
@@ -405,7 +402,7 @@ class CurveLipid(LipdBase):
         diel : array
             The one-dimensional array of the dielectric constant.
         '''
-        return k2 / (1 + np.exp(-(k1*(x-b1)))) + b2
+        return k2 / (1 + np.exp(-(pq.Quantity(k1, 1/pq.angstrom)*(x-pq.Quantity(b1, pq.angstrom))))) + b2
 
 def plot_dx(x, charge, diel, esp):
     fig, host = plt.subplots()
@@ -433,17 +430,12 @@ def plot_dx(x, charge, diel, esp):
     esp = esp[int(np.rint(shape[0] / 2)), int(np.rint(shape[0] / 2)), :]
 
     p1, = host.plot(x, esp, "b-", label="ESP")
-    p2, = par1.plot(x, charge, "r-", label="Charge")
+    p2, = par1.plot(x, charge*1000, "r-", label="Charge")
     p3, = par2.plot(x, diel, "g-", label="Diel")
-
-    host.set_xlim(0, 2)
-    host.set_ylim(0, 2)
-    par1.set_ylim(0, 4)
-    par2.set_ylim(1, 65)
 
     host.set_xlabel("Z axis (A)")
     host.set_ylabel("ESP (kT/e)")
-    par1.set_ylabel("Charge (e/Å^3)")
+    par1.set_ylabel("Charge (me/Å^3)")
     par2.set_ylabel("Diel")
 
     host.yaxis.label.set_color(p1.get_color())
@@ -459,3 +451,4 @@ def plot_dx(x, charge, diel, esp):
     lines = [p1, p2, p3]
 
     host.legend(lines, [l.get_label() for l in lines])
+    return fig
