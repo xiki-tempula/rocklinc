@@ -11,3 +11,4 @@ xi_LS = -2.837297
 # epsilon_0 is the permittivity of vacuum.
 # 1/(4π*epsilon_0) is 138.93545585 kJ nm e-2 mol-1
 epsilon_0 = 5.727657570135483e-04 * pq.mol * pq.e ** 2 / ((1000 * pq.J) * pq.nm)
+

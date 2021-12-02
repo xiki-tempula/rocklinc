@@ -1,0 +1,53 @@
+#############################################################################
+# Heterogenous PB calculations to calculate the residual integrated
+# potentials I_P and I_L.
+#
+# Input files:
+#   prot_only.pqr    - The protein-ligand complex, but with only the protein
+#                      atoms charged.
+#   lig_in_prot.pqr  - The protein-ligand complex, but with only the ligand
+#                      atoms charged.
+#   lig_only.pqr     - The ligand only, in the same coordinates as the above.
+#                      Used for centering the box only.
+#
+# Output files:
+#   protein_RIP_het.dx   - The potential grid based on prot_only.pqr
+#   ligand_RIP_het.dx    - The potential grid based on lig_in_prot.pqr
+#
+#############################################################################
+
+# READ IN MOLECULES
+read
+    mol pqr ref.pqr
+    charge dx charge.dx
+    diel dx dielx.dx diely.dx dielz.dx
+end
+
+# CALCULATE POTENTIAL WITH ONLY THE PROTEIN CHARGES
+elec name lipid
+    mg-manual
+    mol 1
+    dime {grid_x} {grid_y} {grid_z}
+    glen {x:.2f} {y:.2f} {z:.2f}
+    lpbe
+    bcfl mdh
+    pdie 1.0
+    sdie 80
+    gcent 0 0 0
+    chgm spl4
+    srfm smol
+    srad 1.4
+    swin 0.3
+    sdens 40.0
+    temp 310.0
+    usemap charge 1
+    usemap diel 1
+    calcenergy total
+    calcforce no
+    write pot dx lipid
+    write charge dx charge_check
+    write dielx dx dielx_check
+end
+
+# SO LONG
+quit
