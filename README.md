@@ -1,7 +1,7 @@
 RocklinC
 ==============================
 [//]: # (Badges)
-[![Travis Build Status](https://travis-ci.com/xiki-tempula/RocklinC.svg?branch=master)](https://travis-ci.com/xiki-tempula/RocklinC)
+[![GitHub Actions Build Status](https://github.com/xiki-tempula/RocklinC/workflows/CI/badge.svg)](https://github.com/xiki-tempula/RocklinC/actions?query=workflow%3ACI)
 [![codecov](https://codecov.io/gh/xiki-tempula/RocklinC/branch/master/graph/badge.svg)](https://codecov.io/gh/xiki-tempula/RocklinC/branch/master)
 
 
