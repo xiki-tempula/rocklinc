@@ -16,6 +16,7 @@ second step is the APBS calculation. The third step is summarising the results.
    system_setup
    APBS_calculations
    write_result
+   lipid
 
 Indices and tables
 ==================
