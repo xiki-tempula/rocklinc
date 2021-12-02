@@ -45,7 +45,7 @@ class LipdBase():
         '''
         ...
 
-    def generate_charge(self, z_list, **kwargs):
+    def generate_charge(self, z_list, param_charge):
         ''' Generate the charge density from the coordinates.
 
         Parameters
@@ -66,10 +66,10 @@ class LipdBase():
             perodic_z = z % dim
             if perodic_z >= dim / 2:
                 real_x = perodic_z - dim / 2
-                charge_list.append(self.gaussian_mixture(real_x, **kwargs))
+                charge_list.append(self.gaussian_mixture(real_x, *param_charge))
             else:
                 real_x = dim / 2 - perodic_z
-                charge_list.append(self.gaussian_mixture(real_x, **kwargs))
+                charge_list.append(self.gaussian_mixture(real_x, *param_charge))
 
         # correct the unit
         charge_list = np.array(charge_list) * charge_list[0].units
@@ -94,7 +94,7 @@ class LipdBase():
         '''
         ...
 
-    def generate_diel(self, z_list, **kwargs):
+    def generate_diel(self, z_list, param_diel):
         ''' Generate the dielectric constant from the coordinates.
 
         Parameters
@@ -115,13 +115,13 @@ class LipdBase():
             perodic_z = z % dim
             if perodic_z >= dim / 2:
                 real_x = perodic_z - dim / 2
-                diel_list.append(self.diel_model(real_x, **kwargs))
+                diel_list.append(self.diel_model(real_x, *param_diel))
             else:
                 real_x = dim / 2 - perodic_z
-                diel_list.append(self.diel_model(real_x, **kwargs))
+                diel_list.append(self.diel_model(real_x, *param_diel))
         return np.array(diel_list)
 
-    def write_dx_input(self, **kwargs):
+    def write_dx_input(self, param_charge, param_diel):
         ''' Generate the dielectric constant and charge grid for APBS
         calculations.
 
@@ -140,8 +140,8 @@ class LipdBase():
         # generate the one dimensional z axis
         z_list = np.linspace(0 * pq.angstrom, self.dim[-1], self.grid[-1])
 
-        charge = self.generate_charge(z_list, *kwargs['charge'])
-        diel = self.generate_diel(z_list, *kwargs['diel'])
+        charge = self.generate_charge(z_list, param_charge)
+        diel = self.generate_diel(z_list, param_diel)
 
         # expand to 3D
         diel = np.ones((self.grid[0], self.grid[1], 1)) * diel.reshape(
