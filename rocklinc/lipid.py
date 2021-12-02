@@ -246,8 +246,8 @@ class LipdBase():
                   int(np.rint(self.grid[1] / 2)), :]
         return out_ESP
 
-def StepLipid(LipdBase):
-
+class StepLipid(LipdBase):
+    @staticmethod
     def gaussian_mixture(x, magnitude, neg_loc, neg_width, pos_loc, pos_width):
         ''' Charge density with respect to the distance to the end of the
         lipid.
@@ -282,6 +282,7 @@ def StepLipid(LipdBase):
                      pq.Quantity(pos_width, pq.angstrom),
                      pq.Quantity(magnitude, pq.e / pq.angstrom ** 3))
 
+    @staticmethod
     def diel_model(x, thickness, diel_low, diel_high):
         ''' The dielectric constant with respect to the distance to the end
         of the lipid.
@@ -309,7 +310,7 @@ def StepLipid(LipdBase):
         else:
             return diel_high
 
-def CurveLipid(LipdBase):
+class CurveLipid(LipdBase):
     @staticmethod
     def gaussian_mixture(x, cho_loc, cho_std, cho_mag,
                          po4_loc, po4_std, po4_mag,
