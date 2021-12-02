@@ -21,7 +21,7 @@ class TestStepLipid():
 
     def test_fig(self, lipid):
         lipid, fig = lipid
-        assert isinstance(fig, plt.figure())
+        assert isinstance(fig, plt.figure)
 
 class TestCurveLipid():
     @staticmethod
@@ -43,4 +43,4 @@ class TestCurveLipid():
     
     def test_fig(self, lipid):
         lipid, fig = lipid
-        assert isinstance(fig, plt.figure())
+        assert isinstance(fig, plt.figure)
