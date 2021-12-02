@@ -10,17 +10,17 @@ def gauss(x, mu, sigma, A):
     return A * np.exp(-(x - mu) ** 2 / 2 / sigma ** 2)
 
 class LipdBase():
-    def __init__(self, dim, grid):
-        ''' setup the grids for the APBS calculations.
+    ''' setup the grids for the APBS calculations.
 
-        Parameters
-        ----------
-        dim : list
-            The unitcell dimensions of the system in Å ``[lx, ly, lz]``.
-            The pq.Quantity array could also be used.
-        grid: list
-            The number of grids in the x, y, z axis ``[257, 257, 257]``.
-        '''
+    Parameters
+    ----------
+    dim : list
+        The unitcell dimensions of the system in Å ``[lx, ly, lz]``.
+        The pq.Quantity array could also be used.
+    grid: list
+        The number of grids in the x, y, z axis ``[257, 257, 257]``.
+    '''
+    def __init__(self, dim, grid):
         self.dim = pq.Quantity(dim, pq.angstrom)
         self.grid = grid
         # The grid will include the first and last point
